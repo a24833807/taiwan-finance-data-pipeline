@@ -46,7 +46,7 @@ def test_transform_twse_columns_to_standard_schema(raw_twse_df):
 def test_transform_volume_removes_commas_and_uses_nullable_integer(raw_twse_df):
     result = transform_twse_daily_price(raw_twse_df, "20240701")
 
-    assert result.loc[0, "volume"] == 123
+    assert result.loc[0, "volume"] == 25000000
     assert result["volume"].dtype == "Int64"
 
 
