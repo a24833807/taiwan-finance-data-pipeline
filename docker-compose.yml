@@ -17,5 +17,16 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres-test:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: stock_test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
 volumes:
   postgres_data:

@@ -5,6 +5,7 @@ import logging
 import pandas as pd
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy import BigInteger, Column, Date, MetaData, Numeric, String, Table
+from sqlalchemy.engine import Engine
 
 from db import get_engine
 
@@ -26,8 +27,8 @@ stock_daily_price = Table(
 )
 
 
-def load_stock_daily_price(df: pd.DataFrame) -> int:
-    """Upsert stock daily price records into PostgreSQL."""
+def load_stock_daily_price(df: pd.DataFrame, engine: Engine | None = None) -> int:
+    """Upsert stock daily price records using the provided or configured engine."""
     if df.empty:
         logger.warning("No rows to load into stock_daily_price")
         return 0
@@ -38,7 +39,8 @@ def load_stock_daily_price(df: pd.DataFrame) -> int:
         index_elements=["stock_id", "trade_date"],
     )
 
-    engine = get_engine()
+    if engine is None:
+        engine = get_engine()
     with engine.begin() as connection:
         result = connection.execute(insert_stmt)
 
