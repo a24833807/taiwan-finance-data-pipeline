@@ -1,5 +1,6 @@
-from pathlib import Path
+import os
 import sys
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -10,9 +11,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from load import load_stock_daily_price
 
 
-TEST_DATABASE_URL = (
-    "postgresql+psycopg2://"
-    "test_user:test_password@localhost:5433/stock_test_db"
+TEST_DATABASE_URL = os.getenv(
+    "TEST_DATABASE_URL",
+    (
+        "postgresql+psycopg2://"
+        "test_user:test_password@localhost:5433/stock_test_db"
+    ),
 )
 
 test_engine = create_engine(TEST_DATABASE_URL)

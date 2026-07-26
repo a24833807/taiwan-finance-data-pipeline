@@ -8,6 +8,26 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: stock_test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d stock_test_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_DATABASE_URL: >-
+        postgresql+psycopg2://test_user:test_password@localhost:5432/stock_test_db
+      PGPASSWORD: test_password
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -22,5 +42,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest -v
+      - name: Initialize test database
+        run: |
+          psql \
+            -h localhost \
+            -U test_user \
+            -d stock_test_db \
+            -f sql/init.sql
+
+      - name: Run unit tests
+        run: pytest -v tests/test_main.py tests/test_transform.py
+
+      - name: Run integration tests
+        run: pytest -v tests/test_load_integration.py
