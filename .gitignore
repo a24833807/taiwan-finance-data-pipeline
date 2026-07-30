@@ -5,3 +5,7 @@ __pycache__/
 venv/
 data/raw/*
 !data/raw/.gitkeep
+.env.airflow
+airflow/config/airflow.cfg
+airflow/logs/*
+!airflow/logs/.gitkeep
