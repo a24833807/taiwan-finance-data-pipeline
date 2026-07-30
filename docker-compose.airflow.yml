@@ -2,6 +2,9 @@ name: taiwan-finance-airflow
 
 x-airflow-common: &airflow-common
   image: ${AIRFLOW_IMAGE_NAME}
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
@@ -15,14 +18,22 @@ x-airflow-common: &airflow-common
     AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
     AIRFLOW_CONFIG: /opt/airflow/config/airflow.cfg
+    PYTHONPATH: /opt/airflow/project:/opt/airflow/project/src
+    POSTGRES_HOST: ${POSTGRES_HOST}
+    POSTGRES_PORT: ${POSTGRES_PORT}
+    POSTGRES_DB: ${POSTGRES_DB}
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/logs:/opt/airflow/logs
     - ./airflow/plugins:/opt/airflow/plugins
     - ./airflow/config:/opt/airflow/config
+    - ./src:/opt/airflow/project/src:ro
   user: "${AIRFLOW_UID}:0"
   networks:
     - airflow_network
+    - project_network
   depends_on: &airflow-common-depends-on
     airflow-postgres:
       condition: service_healthy
@@ -159,3 +170,6 @@ volumes:
 networks:
   airflow_network:
     name: taiwan-finance-airflow-network
+  project_network:
+    name: taiwan-finance-project-network
+    external: true

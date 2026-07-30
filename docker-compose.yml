@@ -16,6 +16,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - project_network
 
   postgres-test:
     image: postgres:16
@@ -30,3 +32,7 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  project_network:
+    name: taiwan-finance-project-network
