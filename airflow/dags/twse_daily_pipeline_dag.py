@@ -9,7 +9,7 @@ with DAG(
         "retries": 2,
         "retry_delay": timedelta(minutes=5),
     },
-    start_date=datetime(2026, 7, 1),
+    start_date=datetime(2024, 7, 1),
     schedule="@daily",
     catchup=False,
     params={
@@ -21,6 +21,7 @@ with DAG(
         )
     },
     tags=["twse", "etl"],
+    max_active_runs=1
 ) as dag:
 
     @task(task_id="run_twse_pipeline")
