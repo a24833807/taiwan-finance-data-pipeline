@@ -9,3 +9,4 @@ data/raw/*
 airflow/config/airflow.cfg
 airflow/logs/*
 !airflow/logs/.gitkeep
+taiwan-finance-data-pipeline.code-workspace
